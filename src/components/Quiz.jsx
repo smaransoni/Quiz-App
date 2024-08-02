@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import QUESTIONS from '../questions.js'; //dummy raw data
 import quizCompleteImg from '../assets/quiz-complete.png';
+import QuizTimer from './QuizTimer.jsx';
 
 export default function Quiz() {
   //assumming we get an array of questions
@@ -16,12 +17,19 @@ export default function Quiz() {
 
   const quizIsComplete = activeQuestionIndex === QUESTIONS.length;
 
-  function handleSelectAnswer(selectedAnswer) {
+  const handleSelectAnswer = useCallback(function handleSelectAnswer(
+    selectedAnswer
+  ) {
     setUserAnswers(prevUserAnswers => {
       return [...prevUserAnswers, selectedAnswer];
     }); //preserving the old state, i.e., answers to previous questions
     // NOTE: Therefore, updating the <state using the function form> as we want to update the state based on the previous version fo the state
-  }
+  },
+  []);
+
+  const handleSkipAnswer = useCallback(() => {
+    handleSelectAnswer(null);
+  }, [handleSelectAnswer]);
 
   if (quizIsComplete) {
     return (
@@ -39,6 +47,11 @@ export default function Quiz() {
   return (
     <div id="quiz">
       <div id="question">
+        <QuizTimer
+          key={activeQuestionIndex}
+          timeout={1000}
+          onTimeout={handleSkipAnswer}
+        />
         <h2>{QUESTIONS[activeQuestionIndex].text}</h2>
         <ul id="answers">
           {shuffledAnswers.map(answer => (

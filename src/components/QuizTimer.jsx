@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 
-export default function QuizTimer({ onTimeout, timeout }) {
+export default function QuizTimer({ onTimeout, timeout, mode }) {
   const [timeRemaining, setTimeRemaining] = useState(timeout);
 
   useEffect(() => {
     console.log('Setting timer');
     const timer = setTimeout(() => {
-      onTimeout(); // add null as ans for current question
+      onTimeout();
     }, timeout);
 
     return () => {
@@ -25,5 +25,12 @@ export default function QuizTimer({ onTimeout, timeout }) {
     };
   }, []);
 
-  return <progress id="question-time" max={timeout} value={timeRemaining} />;
+  return (
+    <progress
+      id="question-time"
+      max={timeout}
+      value={timeRemaining}
+      className={mode}
+    />
+  );
 }
